@@ -1,94 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+  <title>Smiley's Chatbot</title>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smiley's AI Chatbot 🤖</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f7f7f7;
-      padding: 2rem;
+    #chat-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
     }
+
     #chatbox {
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      max-height: 500px;
       background: white;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 999;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: sans-serif;
     }
-    .message {
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border-radius: 5px;
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
     }
-    .user {
-      background: #d0e8ff;
-      text-align: right;
+
+    #user-input {
+      display: flex;
+      border-top: 1px solid #eee;
     }
-    .bot {
-      background: #e6ffe6;
+
+    #user-input input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
     }
-    input, button {
-      padding: 0.5rem;
-      font-size: 1rem;
+
+    #user-input button {
+      border: none;
+      padding: 10px;
+      background: #f59e0b;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div id="chatbox">
-    <h2>Smiley's AI Chatbot 🤖</h2>
-    <div id="messages"></div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Type your message here..." required style="width: 80%;" />
-      <button type="submit">Send</button>
-    </form>
+
+<button id="chat-button">💬</button>
+
+<div id="chatbox">
+  <div id="messages"></div>
+  <div id="user-input">
+    <input type="text" id="userText" placeholder="Ask me anything..." />
+    <button onclick="sendMessage()">Send</button>
   </div>
+</div>
 
-  <script>
-    const form = document.getElementById("chat-form");
-    const userInput = document.getElementById("user-input");
-    const messagesDiv = document.getElementById("messages");
+<script>
+  const button = document.getElementById('chat-button');
+  const chatbox = document.getElementById('chatbox');
+  const messages = document.getElementById('messages');
+  const userText = document.getElementById('userText');
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const message = userInput.value;
-      if (!message) return;
+  button.onclick = () => {
+    chatbox.style.display = chatbox.style.display === 'block' ? 'none' : 'block';
+  };
 
-      appendMessage("user", message);
-      userInput.value = "";
-
-      try {
-        const response = await fetch("https://hook.us2.make.com/23eti9hl9txpxllpow0wmk9gksw8okeq", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
-
-        const data = await response.json();
-
-        let reply =
-          data?.message ||
-          data?.body?.message ||
-          data?.result ||
-          data?.choices?.[0]?.message?.content ||
-          JSON.stringify(data);
-
-        appendMessage("bot", reply || "[No response]");
-      } catch (err) {
-        appendMessage("bot", "[Error getting response]");
-        console.error(err);
-      }
+  function sendMessage() {
+    const message = userText.value.trim();
+    if (!message) return;
+    addMessage('You', message);
+    userText.value = '';
+    fetch("https://hook.us2.make.com/23eti9hl9txpxllpow0wmk9gksw8okeq", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    })
+    .then(res => res.json())
+    .then(data => {
+      addMessage("Smiley's Bot", data.message || "Sorry, I didn't get that.");
+    })
+    .catch(() => {
+      addMessage("Smiley's Bot", "Sorry, there was an error.");
     });
+  }
 
-    function appendMessage(sender, text) {
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.textContent = text;
-      messagesDiv.appendChild(msg);
-    }
-  </script>
+  function addMessage(sender, text) {
+    const msg = document.createElement('div');
+    msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  userText.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
+
 </body>
 </html>
