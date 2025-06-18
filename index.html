@@ -92,14 +92,24 @@
     if (!message) return;
     addMessage('You', message);
     userText.value = '';
+
     fetch("https://hook.us2.make.com/23eti9hl9txpxllpow0wmk9gksw8okeq", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
     })
-    .then(res => res.json())
-    .then(data => {
-      addMessage("Smiley's Bot", data.message || "Sorry, I didn't get that.");
+    .then(async res => {
+      const data = await res.json();
+      let reply = "Sorry, I didn't get that.";
+
+      if (typeof data === 'object' && data.message) {
+        reply = data.message;
+      } else if (typeof data === 'string') {
+        reply = data;
+      }
+
+      reply = reply.replace(/\n/g, "<br>");
+      addMessage("Smiley's Bot", reply);
     })
     .catch(() => {
       addMessage("Smiley's Bot", "Sorry, there was an error.");
