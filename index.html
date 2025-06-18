@@ -4,11 +4,23 @@
   <title>Smiley's Chatbot</title>
   <meta charset="UTF-8" />
   <style>
+    :root {
+      --smiley-red: #c62828;
+      --smiley-light: #fbe9e7;
+      --text-gray: #333;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
     #chat-button {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #f59e0b;
+      background: var(--smiley-red);
       color: white;
       border: none;
       border-radius: 50%;
@@ -16,8 +28,13 @@
       height: 60px;
       font-size: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       z-index: 1000;
+      transition: background 0.3s ease;
+    }
+
+    #chat-button:hover {
+      background: #b71c1c;
     }
 
     #chatbox {
@@ -25,28 +42,35 @@
       position: fixed;
       bottom: 90px;
       right: 20px;
-      width: 320px;
-      max-height: 500px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 340px;
+      max-height: 520px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
       z-index: 999;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      font-family: sans-serif;
+      overflow: hidden;
+      border: 2px solid var(--smiley-red);
     }
 
     #messages {
       flex: 1;
+      padding: 12px;
       overflow-y: auto;
-      padding: 10px;
+      background: var(--smiley-light);
+    }
+
+    #messages div {
+      margin-bottom: 10px;
+      line-height: 1.4;
+      color: var(--text-gray);
     }
 
     #user-input {
       display: flex;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #ddd;
+      background: #fff;
     }
 
     #user-input input {
@@ -54,14 +78,27 @@
       border: none;
       padding: 10px;
       font-size: 14px;
+      outline: none;
     }
 
     #user-input button {
       border: none;
-      padding: 10px;
-      background: #f59e0b;
+      padding: 10px 16px;
+      background: var(--smiley-red);
       color: white;
       cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    #user-input button:hover {
+      background: #b71c1c;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--smiley-red);
     }
   </style>
 </head>
